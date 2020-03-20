@@ -109,8 +109,8 @@ analytics:
 author:
   name             : "aerain"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "카카오 어시스턴트로 근무중입니다."
-  location         : "Jeju"
+  bio              : "어리숙한 개발자"
+  location         : "Seoul"
   email            : "j40f893@gmail.com"
   links:
     - label: "Email"
