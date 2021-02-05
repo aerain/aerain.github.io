@@ -34,7 +34,7 @@ Spring에서 카프카를 컨슘하기 위해 다음 라이브러리를 의존�
 
 
 build.gradle.kts
-```kts
+```kotlin
 
 dependencies {
     ...
@@ -67,7 +67,7 @@ spring.kafka.properties.schema.registry.url=...
 ```
 
 TestConsumer.kt
-```kt
+```kotlin
 @Service
 class TestConsumer {
 
@@ -82,7 +82,7 @@ class TestConsumer {
 테스트 코드 환경은 JUnit5로 작성되었다. 통합테스트 환경 구축을 시도해 보겠다.
 일단 통합테스트를 위한 카프카 컨테이너를 띄우기 위해 TestContainer 코드를 작성하겠다.
 
-```kt
+```kotlin
 object KafkaContainerInitializer {
     
     val kafka = KafkaContainer(DockerImageName.parse("confluentic/cpkafka:5.4.3"))
@@ -105,7 +105,7 @@ object KafkaContainerInitializer {
 
 그리고 통합테스트에 사용할 추상 클래스를 정의하여 ContextConfiguration 의 initalizer에 등록한다.
 
-```kt
+```kotlin
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(
     initializers = [
@@ -153,7 +153,7 @@ spring.kafka.properties.schema.registry.url=mock://test
 
 이제 Consumer를 테스트하기 위해 KafkaProducer를 생성하기로한다.
 
-```kt
+```kotlin
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 @ContextConfiguration(
@@ -193,7 +193,7 @@ abstract class IntegrationTest {
 
 이제 본격적으로 테스트를 위한 코드를 작성하였다.
 
-```kt
+```kotlin
 
 class ConsumerIntegrationTest : IntegrationTest() {
     @Value("\${kafka.topic}")
