@@ -1,5 +1,4 @@
 ---
-layout: post
 title: "Avro Schema을 기반으로 하는 카프카 메시지를 소비하는 Spring Kafka Consumer 통합 테스트 만들기."
 category: "spring"
 tags: ["Spring", "Kafka", "TestContainer", "Schema Registry", "Avro"]
