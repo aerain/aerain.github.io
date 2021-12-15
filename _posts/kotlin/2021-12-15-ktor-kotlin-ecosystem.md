@@ -16,7 +16,7 @@ ktor에서 매력을 느꼈던 부분중 하나는 Coroutine을 정식 지원한
 
 하지만 뭐니뭐니해도 ktor가 스프링보다 경량이라는 점이 필자를 더더욱 매력적으로 만들었다. 
 
-```kt
+```kotlin
 fun main() {
 	embeddedServer(Netty, port = 8000) {
 		routing {
@@ -47,7 +47,7 @@ ktor + clean architecture를 사용한 정말 간단한 crud 프로젝트를 도
 어째서 분리해야 할까? 사실 스프링을 기반으로 비즈니스 로직에서 RestTemplate을 사용하여 데이터를 받아온 뒤에 이렇게 예를 들어서 설명하면 다음과 같은 예시코드를 들면 정말 이해하기 편해진다.
 
 ## AS-IS
-```kt
+```kotlin
 // Business logic
 class PurchaseService(
     private val template: RestTemplate,
@@ -75,7 +75,7 @@ class PurchaseService(
 
 ## TO-BE
 
-```kt
+```kotlin
 // Business logic
 class PurchaseService(
 	private val purchaseClient: PurchaseClient,
@@ -153,9 +153,11 @@ class Post(
 # UseCase Layer
 도메인 모델을 사용하는 사용사례에 대한 녀석들을 한 사례씩 정의 해 놓은 녀석이다. 클린 아키텍쳐 그림상 주황색에 해당한다. 여기에 UseCase와 Repository등의 인터페이스를 두고자 하였다.
 
+그밖에 UseCase 어노테이션에 대해 all-open을 정의하여 추후 data layer에서 프록시하게끔 하는 것을 고려하였다.
+
 다음 예제는 간단하게 Post 도메인 모델을 pk 기반으로 조회하는 사용 사례이다.
 
-```kt
+```kotlin
 @UseCase
 class GetPostUseCase(
     private val repository: PostRepository
@@ -176,7 +178,7 @@ class GetPostUseCase(
 
 다음 예제는 data layer에 작성된 녀석들의 예시이다.
 
-```kt
+```kotlin
 // Exposed SQL Framework 기반으로 MariaDB와 소통하는 레포지토리 구현체이다.
 class ExposedMariaDbPostRepository(
     private val dispatcher: CoroutineDispatcher
@@ -206,7 +208,7 @@ class TransactionalGetPostUseCase(
 
 ## Api Layer
 이 레이어를 통해 클라이언트가 rest api를 통해 직접 통신한다. 클린 아키텍쳐 그림상 초록색 (컨트롤러)에 해당한다.
-```kt
+```kotlin
 abstract class Api(val route: Routing.() -> Unit) {
     operator fun invoke(app: Application) = app.routing {
         route()
@@ -232,7 +234,7 @@ Ktor은 기본적으로 di container를 제공하지 않는다. 따라서 기존
 
 각 도메인 별로 컨테이너에 등록되어야할 녀석들을 별도로 관리하여 저장하였다. 그 밖에 Dependency Lookup에 사용될 몇몇 녀석들 또한 해당 레이어에 관리하여 저장하였다.
 
-```kt
+```kotlin
 // 모듈 선언부
 val postFactory = factory {
     single<PostApi> { PostApi(get()) } bind Api::class
@@ -256,7 +258,7 @@ val apis get() = getKoin().getAll<Api>().toSet()
 
 다음은 API 등록을 진행하는 부분의 예시이다. 요렇게 정의함으로써 이 레이어에서는 API Layer에서 새로운 api가 추가되더라도 변경이 일어나지 않는다.
 
-```kt
+```kotlin
 // 이 함수에서 사용중인 apis 녀석은 di layer에 정의되어있는 apis의 그것이다.
 fun Application.configureRouting() {
     routing {
